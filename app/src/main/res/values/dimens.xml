@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sizeOfSizeState">30sp</dimen>
+    <dimen name="sizeOfArrow">50dp</dimen>
+    <dimen name="padding_bottom">12dp</dimen>
+    <dimen name="sizeOfStartBottom">18sp</dimen>
+    <dimen name="sizeOfTitle">50sp</dimen>
+    <dimen name="sizeOfNum">30sp</dimen>
+    <dimen name="margin">4dp</dimen>
+    <dimen name="sizeScore">14sp</dimen>
+</resources>

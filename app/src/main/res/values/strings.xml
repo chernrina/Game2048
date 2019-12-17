@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Game2048</string>
+    <string name="size_default">4x4</string>
+    <string name="start_game">Начать игру</string>
+    <string name="nameOfGame">2048</string>
+    <string name="nums">Очки:</string>
+    <string name="record">Рекорд:</string>
+    <string name="saveGame">Схранить игру</string>
+    <string name="results">Достижения</string>
+</resources>

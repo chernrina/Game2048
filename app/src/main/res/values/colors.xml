@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="orange">#FF9A06</color>
+    <color name="lightOrange">#FDCE8A</color>
+    <color name="white">#ffffff</color>
+    <color name="gray">#636363</color>
+    <color name="cell">#FAE6D3</color>
+    <color name="background">#DBDBDB</color>
+    <color name="four">#FFC262</color>
+    <color name="eight">#FFA524</color>
+    <color name="sixteen">#F7774A</color>
+    <color name="thirty">#F85D29</color>
+    <color name="sixty">#FC4233</color>
+    <color name="hundred">#FAD461</color>
+    <color name="two">#98EEA1</color>
+    <color name="black">#000000</color>
+    <color name="darkGray">#3C3B3B</color>
+    <color name="thousand">#6ED2FC</color>
+</resources>
