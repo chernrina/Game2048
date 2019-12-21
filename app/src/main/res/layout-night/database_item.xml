@@ -4,7 +4,8 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@color/darkGray">
 
     <TextView
             android:id="@+id/score"
@@ -14,7 +15,7 @@
             android:layout_alignLeft="@id/name"
             android:paddingTop="@dimen/padding"
             android:text="@string/score"
-            android:textColor="#343434"
+            android:textColor="@color/lightOrange"
             android:textSize="15sp" />
 
     <TextView
@@ -26,6 +27,7 @@
             android:gravity="center_vertical"
             android:paddingBottom="@dimen/padding"
             android:text="@string/name"
+            android:textColor="@color/lightOrange"
             android:textSize="20sp"
             android:textStyle="normal"
             android:typeface="sans" />

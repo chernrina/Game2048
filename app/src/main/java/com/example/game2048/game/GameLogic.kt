@@ -1,6 +1,5 @@
 package com.example.game2048.game
 
-import com.example.game2048.game.GameField
 
 class GameLogic(state: GameField) {
 
@@ -17,6 +16,9 @@ class GameLogic(state: GameField) {
         return score
     }
 
+    fun getField() : GameField {
+        return field
+    }
 
     fun updateState(move: Int) : Boolean {
         var ind = sizeField -1
@@ -155,5 +157,25 @@ class GameLogic(state: GameField) {
             line[i]=newLine[i]
         }
         return line
+    }
+
+    fun checkMove(): Boolean {
+        var ind = sizeField-1
+        while(ind >= 0) {
+            var line = getField().getLine(ind)
+            var i = 0
+            while(i< sizeField -1) {
+                if (line[i]==line[i+1]) return true
+                i++
+            }
+            line = getField().getColumn(ind)
+            i = 0
+            while(i< sizeField -1) {
+                if (line[i]==line[i+1]) return true
+                i++
+            }
+            ind--
+        }
+        return false
     }
 }

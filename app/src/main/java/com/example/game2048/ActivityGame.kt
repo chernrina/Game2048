@@ -1,37 +1,45 @@
 package com.example.game2048
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.view.Menu
-import android.view.MotionEvent
+import android.util.Log
+import android.view.*
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
-import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.game2048.database.DataDAO
+import com.example.game2048.database.DataEntry
 import com.example.game2048.game.GameField
 import com.example.game2048.game.GameLogic
 import kotlinx.android.synthetic.main.activity_state.*
+import kotlinx.android.synthetic.main.save_game.view.*
+import kotlinx.coroutines.*
 
 
 class ActivityGame : AppCompatActivity() {
 
-    var sizeOfState = 4
-    val SIZE_STATE = "count"
+    private val SIZE_STATE = "count"
+    private val SAVED_FIELD = "field"
+    private val ID_PLAYER = "player"
     var listener = TouchListener()
-    lateinit var game : GameLogic
     var nums = emptyArray<Int>()
+    lateinit var game : GameLogic
     lateinit var field : GameField
     lateinit var viewManager : GridLayoutManager
     lateinit var viewAdapter: MyAdapter
-    lateinit var myItemDecoration : DividerItemDecoration
     lateinit var prefs: SharedPreferences
-    private val SAVED_FIELD = "field"
+    lateinit var dialogView : View
+    private lateinit var database : DataDAO
+    var sizeOfState = 4
+    var idPlayer = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,45 +47,54 @@ class ActivityGame : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_state)
         prefs = getSharedPreferences(SAVED_FIELD, Context.MODE_PRIVATE)
-        state.setOnTouchListener(listener)
+
         field = GameField(sizeOfState)
         field.generateNewCell(2)
+        updateField()
         game = GameLogic(field)
 
-        updateField()
+        database = (application as App).getInstance().getDatabase().dateDAO()
+        dialogView = LayoutInflater.from(this).inflate(R.layout.save_game, null)
+
         sizeOfState = intent.extras!!.getInt("count")
         viewManager = GridLayoutManager(this, sizeOfState)
         viewAdapter = MyAdapter(nums)
+
+        state.setOnTouchListener(listener)
         recycler.setOnTouchListener(listener)
         recycler.apply {
             setHasFixedSize(true)
             layoutManager= viewManager as RecyclerView.LayoutManager?
             adapter = viewAdapter
         }
-        myItemDecoration = DividerItemDecoration(
-            recycler.context,
-            viewManager.orientation
-        )
-        recycler.addItemDecoration(myItemDecoration)
-
-        score.text = game.getScore().toString()
     }
 
-    var recordInt = 0
+    private var recordInt = 0
     override fun onStart() {
         super.onStart()
         recordInt = prefs.getInt(SAVED_FIELD,0)
+        idPlayer = prefs.getInt(ID_PLAYER,0)
         record.text = recordInt.toString()
     }
 
     override fun onStop() {
         super.onStop()
         if (game.getScore() > recordInt) prefs.edit().putInt(SAVED_FIELD, game.getScore()).apply()
+        prefs.edit().putInt(ID_PLAYER,idPlayer).apply()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu,menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.saveGame -> {
+                saveGame()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun updateField() {
@@ -88,33 +105,20 @@ class ActivityGame : AppCompatActivity() {
         }
     }
 
-    private fun win() {
+    private fun saveGame() {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage("Победа!")
-        builder.setPositiveButton("Сохранить результат") { _, _ ->
-
-        }
-        builder.setNegativeButton("Играть дальше") { _, _ ->
-            win=false
+        builder.setMessage(getString(R.string.yourName))
+        builder.setView(dialogView)
+        builder.setPositiveButton(getString(R.string.save)) { _, _ ->
+            val name = dialogView.nameOfPlayer.text.toString()
+            GlobalScope.launch {
+                database.insert(DataEntry(idPlayer,name,game.getScore()))
+            }
+            idPlayer++
+            Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_LONG).show()
         }
         val dialog = builder.create()
         dialog.show()
-    }
-
-    private fun checkEmptyCell() {
-        if (nums.indexOf(0) == -1) {
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("Игра окончена")
-            builder.setPositiveButton("Сохранить результат") { _, _ ->
-
-            }
-            builder.setNegativeButton("Начать заново") { _, _ ->
-                ///новая игра или выйти
-
-            }
-            val dialog = builder.create()
-            dialog.show()
-        }
     }
 
     var x_prev : Float = 0.0f
@@ -132,7 +136,9 @@ class ActivityGame : AppCompatActivity() {
                 }
                 ACTION_UP -> {
                     win = game.updateState(getMove(x,y))
-                    field.generateNewCell(1)
+                    if (nums.indexOf(0) != -1) {
+                        field.generateNewCell(1)
+                    }
                     nums = emptyArray()
                     updateField()
                     viewAdapter= MyAdapter(nums)
@@ -147,24 +153,52 @@ class ActivityGame : AppCompatActivity() {
                         win()
                     }
                     checkEmptyCell()
-                    //if (!field.correctField()) {
-                        ////Диалоговое окно игра окончена
-                    //}
-
                 }
             }
             return true
         }
     }
 
-    val RIGHT = 1
-    val LEFT = 2
-    val UP =3
-    val DOWN = 4
+    private fun win() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(getString(R.string.win))
+        builder.setPositiveButton(R.string.save) { _, _ ->
+            saveGame()
+        }
+        builder.setNegativeButton(getString(R.string.continueGame)) { _, _ ->
+            win=false
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun checkEmptyCell() {
+        if (nums.indexOf(0) == -1) {
+            if (!game.checkMove()) {
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage(getString(R.string.gameOver))
+                builder.setPositiveButton(R.string.save) { _, _ ->
+                    saveGame()
+                }
+                builder.setNegativeButton(getString(R.string.exit)) { _, _ ->
+                    finish()
+                }
+                val dialog = builder.create()
+                dialog.show()
+            }
+        }
+    }
+
+    private val RIGHT = 1
+    private val LEFT = 2
+    private val UP =3
+    private val DOWN = 4
     fun getMove(x:Float,y:Float): Int {
-        if((x - x_prev) > 40 ) return RIGHT
-        else if((x_prev - x) > 40 ) return LEFT
-        else if ((y_prev-y) >40 ) return UP
-        else return DOWN
+        return when {
+            (x - x_prev) > 40 -> RIGHT
+            (x_prev - x) > 40 -> LEFT
+            (y_prev-y) >40 -> UP
+            else -> DOWN
+        }
     }
 }

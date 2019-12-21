@@ -7,4 +7,13 @@
     <string name="record">Рекорд:</string>
     <string name="saveGame">Схранить игру</string>
     <string name="results">Достижения</string>
+    <string name="yourName">Ваше имя:</string>
+    <string name="save">Сохранить</string>
+    <string name="saved">Сохранено</string>
+    <string name="win">Победа!</string>
+    <string name="continueGame">Играть дальше</string>
+    <string name="gameOver">Игра окончена</string>
+    <string name="exit">Выход</string>
+    <string name="score">Очки</string>
+    <string name="name">Имя</string>
 </resources>

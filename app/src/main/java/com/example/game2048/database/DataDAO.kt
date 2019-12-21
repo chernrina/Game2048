@@ -1,6 +1,9 @@
 package com.example.game2048.database
 
+import android.os.FileObserver.DELETE
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 
@@ -14,9 +17,12 @@ interface DataDAO {
     fun updateScore(name: String, score: Int)
 
     @Query("SELECT * from score_table")
-    suspend fun getAll(): List<DataEntry>
+    fun getAll(): LiveData<List<DataEntry>>
 
     @Query("SELECT * FROM score_table WHERE playerName = :name")
     fun getByName(name: String): DataEntry
+
+    @Query("DELETE from score_table")
+    fun deleteAll()
 
 }

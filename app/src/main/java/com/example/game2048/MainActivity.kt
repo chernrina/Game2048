@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
     fun rotate(side: Int) {
         var ind = sizeInText.indexOf(sizeOfState.text)
+        val correctType = 3
         if (ind == 0) ind = sizeInText.size
         when (side) {
             ROTATE_RIGHT -> {
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 sizeOfState.text = sizeInText[(ind - 1) % sizeInText.size]
             }
         }
-        typeOfState = sizeInText.indexOf(sizeOfState.text) +3
+        typeOfState = sizeInText.indexOf(sizeOfState.text) + correctType
     }
 
     fun startGame(view: View) {

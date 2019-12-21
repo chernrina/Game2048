@@ -20,7 +20,7 @@ class MyAdapter(private val sizeOfState: Array<Int>) :  RecyclerView.Adapter<MyA
         return MyViewHolder(view)
     }
 
-    val colors: Map<Int,Int> = mapOf(2 to R.color.two,4 to R.color.four, 8 to R.color.eight, 16 to R.color.sixteen,
+    private val colors: Map<Int,Int> = mapOf(2 to R.color.two,4 to R.color.four, 8 to R.color.eight, 16 to R.color.sixteen,
         32 to R.color.thirty,64 to R.color.sixty,128 to R.color.hundred,256 to R.color.hundred,512 to R.color.hundred)
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

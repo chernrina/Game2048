@@ -6,8 +6,8 @@ class GameField(num: Int) {
     fun generateNewCell(i:Int) {
         var ind = 0
         while (ind != i) {
-            val x = (0 until field.size).random()
-            val y = (0 until field.size).random()
+            val x = (field.indices).random()
+            val y = (field.indices).random()
             val probability = (0 until 10).random()
             if (probability != 9) {
                 if (field[x][y] == 0) {
@@ -19,17 +19,6 @@ class GameField(num: Int) {
                 ind++
             }
         }
-    }
-
-    fun correctField() : Boolean{
-        var emptyCell = 0
-        for (line in field) {
-            var i = 0
-            while (i < field.size) {
-                if (line[i]==0) emptyCell++
-            }
-        }
-        return emptyCell != 0
     }
 
     fun getField(x: Int, y:Int): Int {

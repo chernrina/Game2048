@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "score_table")
 data class DataEntry (
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0,
-    var playerName: String = "",
-    var score: Int = 0
+    @PrimaryKey
+    var id: Int,
+    var playerName: String,
+    var score: Int
 )
